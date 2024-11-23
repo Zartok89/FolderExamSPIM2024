@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "PKEntityManagerSubsystem.h"
+#include "Actors/PKEntityActor.h"
 #include "PKSpawningSubsystem.generated.h"
 
 /**
@@ -16,6 +17,6 @@ class FOLDEREXAMSPIM2024_API UPKSpawningSubsystem : public UWorldSubsystem
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Spawning")  
-	int32 SpawnEntityAtLocation(const FVector& Location, const FRotator& Rotation = FRotator::ZeroRotator, const FVector& Scale = FVector(1.0f));
+	UFUNCTION(BlueprintCallable, Category = "Spawning")
+	APKEntityActor* SpawnEntityActorAtLocation(const FVector& Location, const FRotator& Rotation = FRotator::ZeroRotator, const FVector& Scale = FVector(1.0f));
 };

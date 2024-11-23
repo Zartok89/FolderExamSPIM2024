@@ -5,6 +5,8 @@ APKEntityActor::APKEntityActor()
 	PrimaryActorTick.bCanEverTick = true;
 
 	EntityID = -1;
+
+	EntityMesh = CreateDefaultSubobject<UStaticMeshComponent>("EntityMesh");
 }
 
 void APKEntityActor::BeginPlay()

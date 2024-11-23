@@ -8,5 +8,5 @@
 class FOLDEREXAMSPIM2024_API PKBaseComponent
 {
 public:
-	virtual ~PKBaseComponent();
+	virtual ~PKBaseComponent() = default;
 };

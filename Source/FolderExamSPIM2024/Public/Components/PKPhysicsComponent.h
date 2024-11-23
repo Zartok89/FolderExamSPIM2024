@@ -10,7 +10,6 @@ class FOLDEREXAMSPIM2024_API PKPhysicsComponent : public PKBaseComponent
 {
 public:
 	PKPhysicsComponent() : Velocity(FVector::OneVector), Acceleration(FVector::OneVector), bIsSimulating(false) {};
-	virtual ~PKPhysicsComponent() override;
 
 	/*
 	 * Variables

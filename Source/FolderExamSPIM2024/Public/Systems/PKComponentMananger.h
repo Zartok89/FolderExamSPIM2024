@@ -10,8 +10,8 @@ class PKBaseComponent;
 class FOLDEREXAMSPIM2024_API PKComponentMananger
 {
 public:
-	PKComponentMananger();
-	~PKComponentMananger();
+	PKComponentMananger() = default;
+	~PKComponentMananger() = default;
 
 	template <typename T>
 	void AddComponent(int32 EntityID, const FName& ComponentName, TSharedPtr<T> Component)
