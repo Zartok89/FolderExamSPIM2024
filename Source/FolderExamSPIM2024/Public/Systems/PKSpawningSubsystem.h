@@ -21,5 +21,5 @@ public:
 	APKEntityActor* SpawnEntityActorAtLocation(const FVector& Location, const FRotator& Rotation = FRotator::ZeroRotator, const FVector& Scale = FVector(1.0f));
 
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
-	void DespawnEntityActor(APKEntityActor* EntityActor); 
+	void DespawnEntityActor(APKEntityActor* EntityActor);
 };

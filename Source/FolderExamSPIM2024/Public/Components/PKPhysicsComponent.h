@@ -9,11 +9,14 @@
 class FOLDEREXAMSPIM2024_API PKPhysicsComponent : public PKBaseComponent
 {
 public:
-	PKPhysicsComponent() : Velocity(FVector::OneVector), Acceleration(FVector::OneVector), bIsSimulating(false) {};
+	PKPhysicsComponent(int32 InEntityID, const FVector& InVelocity, const FVector& InAcceleration, bool bSimulating)
+		: EntityID(InEntityID), Velocity(InVelocity), Acceleration(InAcceleration), bIsSimulating(bSimulating) {
+	}
 
 	/*
 	 * Variables
 	 */
+	int32 EntityID;
 	FVector Velocity;
 	FVector Acceleration;
 	bool bIsSimulating;

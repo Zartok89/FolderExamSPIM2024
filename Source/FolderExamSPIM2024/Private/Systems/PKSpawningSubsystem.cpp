@@ -5,11 +5,11 @@
 #include "Components/PKMeshComponent.h"
 #include "Components/PKPhysicsComponent.h"
 #include "Components/PKTransformComponent.h"
+#include <Systems/PKComponentManager.h>
 
 APKEntityActor* UPKSpawningSubsystem::SpawnEntityActorAtLocation(const FVector& Location, const FRotator& Rotation,
 	const FVector& Scale)
 {
-	// Get the Entity Manager Subsystem
 	UPKEntityManagerSubsystem* EntityManager = GetWorld()->GetSubsystem<UPKEntityManagerSubsystem>();
 	if (!EntityManager)
 	{
@@ -17,7 +17,6 @@ APKEntityActor* UPKSpawningSubsystem::SpawnEntityActorAtLocation(const FVector& 
 		return nullptr;
 	}
 
-	// Spawn the Entity Actor in the world
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = nullptr;
 	SpawnParams.Instigator = nullptr;
@@ -30,40 +29,23 @@ APKEntityActor* UPKSpawningSubsystem::SpawnEntityActorAtLocation(const FVector& 
 		return nullptr;
 	}
 
-	// Register the actor as an entity
 	int32 EntityID = EntityManager->CreateEntity();
 	EntityActor->SetEntityID(EntityID);
 
-	// Add a Transform Component
-	TSharedPtr<PKTransformComponent> TransformComponent = MakeShared<PKTransformComponent>();
-	if (TransformComponent.IsValid())
-	{
-		TransformComponent->Position = Location;
-		TransformComponent->Rotation = Rotation;
-		TransformComponent->Scale = Scale;
-		EntityManager->GetComponentManager().AddComponent<PKTransformComponent>(EntityID, TEXT("Transform"), TransformComponent);
-		UE_LOG(LogTemp, Warning, TEXT("Added TransformComponent component to PKEntityActor: %d"), EntityID);
-	}
+	PKComponentManager& ComponentManager = EntityManager->GetComponentManager();
 
-	// Add a Physics Component
-	TSharedPtr<PKPhysicsComponent> PhysicsComponent = MakeShared<PKPhysicsComponent>();
-	if (PhysicsComponent.IsValid())
-	{
-		PhysicsComponent->Velocity = FVector::ZeroVector;
-		PhysicsComponent->Acceleration = FVector::ZeroVector;
-		PhysicsComponent->bIsSimulating = true;
-		EntityManager->GetComponentManager().AddComponent<PKPhysicsComponent>(EntityID, TEXT("Physics"), PhysicsComponent);
-		UE_LOG(LogTemp, Warning, TEXT("Added PhysicsComponent component to PKEntityActor: %d"), EntityID);
-	}
+	int32 TransformIndex = ComponentManager.AddTransformComponent(EntityID, Location, Rotation, Scale);
+	EntityActor->SetTransformIndex(TransformIndex);
 
-	// Set the mesh transform
+	int32 PhysicsIndex = ComponentManager.AddPhysicsComponent(EntityID, FVector::ZeroVector, FVector::ZeroVector, true);
+	EntityActor->SetPhysicsIndex(PhysicsIndex);
+
 	if (EntityActor->EntityMesh)
 	{
 		EntityActor->EntityMesh->SetWorldLocationAndRotation(Location, Rotation);
 		EntityActor->EntityMesh->SetWorldScale3D(Scale);
 	}
 
-	// Log the spawn
 	UE_LOG(LogTemp, Warning, TEXT("Spawned PKEntityActor with Entity ID: %d at Location: %s"), EntityID, *Location.ToString());
 
 	return EntityActor;
@@ -77,7 +59,6 @@ void UPKSpawningSubsystem::DespawnEntityActor(APKEntityActor* EntityActor)
 		return;
 	}
 
-	// Get the Entity Manager Subsystem
 	UPKEntityManagerSubsystem* EntityManager = GetWorld()->GetSubsystem<UPKEntityManagerSubsystem>();
 	if (!EntityManager)
 	{
@@ -85,12 +66,13 @@ void UPKSpawningSubsystem::DespawnEntityActor(APKEntityActor* EntityActor)
 		return;
 	}
 
-	// Get the Entity ID from the actor
 	int32 EntityID = EntityActor->GetEntityID();
 
-	// Destroy the entity in the Entity Manager
 	if (EntityManager->DestroyEntity(EntityID))
 	{
+		PKComponentManager& ComponentManager = EntityManager->GetComponentManager();
+		ComponentManager.RemoveAllComponents(EntityID);
+
 		UE_LOG(LogTemp, Warning, TEXT("Successfully destroyed entity with ID: %d"), EntityID);
 	}
 	else
@@ -98,7 +80,6 @@ void UPKSpawningSubsystem::DespawnEntityActor(APKEntityActor* EntityActor)
 		UE_LOG(LogTemp, Error, TEXT("Failed to destroy entity with ID: %d"), EntityID);
 	}
 
-	// Destroy the actor in the world
 	EntityActor->Destroy();
 	UE_LOG(LogTemp, Warning, TEXT("Destroyed APKEntityActor with Entity ID: %d"), EntityID);
 }
