@@ -20,7 +20,7 @@ public:
 	int32 CreateEntity();
 
 	UFUNCTION(BlueprintCallable, Category = "EntityManager")
-	void DestroyEntity(int32 EntityID);
+	bool DestroyEntity(int32 EntityID);
 
 	UFUNCTION(BlueprintCallable, Category = "EntityManager")
 	const TSet<int32>& GetAllEntities() const { return Entities; }

@@ -9,8 +9,9 @@ int32 UPKEntityManagerSubsystem::CreateEntity()
 	return NewID;
 }
 
-void UPKEntityManagerSubsystem::DestroyEntity(int32 EntityID)
+bool UPKEntityManagerSubsystem::DestroyEntity(int32 EntityID)
 {
 	Entities.Remove(EntityID);
 	ComponentManager.RemoveAllComponents(EntityID);
+	return true;
 }

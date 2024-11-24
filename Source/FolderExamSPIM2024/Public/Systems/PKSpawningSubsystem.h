@@ -19,4 +19,7 @@ class FOLDEREXAMSPIM2024_API UPKSpawningSubsystem : public UWorldSubsystem
 public:
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
 	APKEntityActor* SpawnEntityActorAtLocation(const FVector& Location, const FRotator& Rotation = FRotator::ZeroRotator, const FVector& Scale = FVector(1.0f));
+
+	UFUNCTION(BlueprintCallable, Category = "Spawning")
+	void DespawnEntityActor(APKEntityActor* EntityActor); 
 };
