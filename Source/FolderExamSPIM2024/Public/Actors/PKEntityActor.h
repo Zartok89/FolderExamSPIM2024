@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "PKBaseEntity.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 #include "PKEntityActor.generated.h"
 
@@ -27,6 +28,7 @@ public:
 
 	void SetEntityID(int32 ID) { EntityID = ID; }
 	int32 GetEntityID() const { return EntityID; }
+
 	/*
 	 * Variables
 	 */
@@ -34,4 +36,8 @@ public:
 	int32 PhysicsIndex;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Entity")
 	UStaticMeshComponent* EntityMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
+	UBoxComponent* BoxCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
+	FVector CollisionSize;
 };

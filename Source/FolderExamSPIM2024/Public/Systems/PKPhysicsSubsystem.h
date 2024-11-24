@@ -27,6 +27,8 @@ public:
 
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override { return true; }
 
+	void ResolveCollision(PKTransformComponent& TransformA, PKPhysicsComponent& PhysicsA, PKTransformComponent& TransformB, PKPhysicsComponent& PhysicsB);
+
 	/*
 	 * Variables
 	 */

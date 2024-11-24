@@ -6,6 +6,8 @@ APKEntityActor::APKEntityActor()
 
 	EntityMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("EntityMesh"));
 	SetRootComponent(EntityMesh);
+	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
+	AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultMesh(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
 	if (DefaultMesh.Succeeded())
@@ -18,6 +20,15 @@ APKEntityActor::APKEntityActor()
 	{
 		EntityMesh->SetMaterial(0, DefaultMaterial.Object);
 	}
+
+	CollisionSize = FVector(50.0f, 50.0f, 50.0f);
+	BoxCollision->SetBoxExtent(CollisionSize);
+
+	BoxCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	BoxCollision->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	BoxCollision->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	BoxCollision->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
+	BoxCollision->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
 }
 
 void APKEntityActor::BeginPlay()

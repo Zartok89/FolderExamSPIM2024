@@ -20,9 +20,9 @@ public:
 		return Index;
 	}
 
-	int32 AddPhysicsComponent(int32 EntityID, FVector Velocity, FVector Acceleration, bool bSimulating)
+	int32 AddPhysicsComponent(int32 EntityID, float Mass, FVector Velocity, FVector Acceleration, float CollisionRadius, bool bSimulating)
 	{
-		int32 Index = PhysicsComponents.Add(PKPhysicsComponent(EntityID, Velocity, Acceleration, bSimulating));
+		int32 Index = PhysicsComponents.Add(PKPhysicsComponent(EntityID, Mass, Velocity, Acceleration, CollisionRadius, bSimulating));
 		EntityToPhysicsIndex.Add(EntityID, Index);
 		return Index;
 	}

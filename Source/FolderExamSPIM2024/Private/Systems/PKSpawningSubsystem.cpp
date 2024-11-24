@@ -7,7 +7,7 @@
 #include "Components/PKTransformComponent.h"
 #include <Systems/PKComponentManager.h>
 
-APKEntityActor* UPKSpawningSubsystem::SpawnEntityActorAtLocation(const FVector& Location, const FRotator& Rotation, const FVector& Scale, FVector Velocity, FVector Acceleration)
+APKEntityActor* UPKSpawningSubsystem::SpawnEntityActorAtLocation(const FVector& Location, const FRotator& Rotation, const FVector& Scale, FVector Velocity, FVector Acceleration, float Mass, float CollisionRadius)
 {
 	UPKEntityManagerSubsystem* EntityManager = GetWorld()->GetSubsystem<UPKEntityManagerSubsystem>();
 	if (!EntityManager)
@@ -28,7 +28,7 @@ APKEntityActor* UPKSpawningSubsystem::SpawnEntityActorAtLocation(const FVector& 
 
 	// Add components to the entity
 	int32 TransformIndex = ComponentManager.AddTransformComponent(EntityID, Location, Rotation, Scale);
-	int32 PhysicsIndex = ComponentManager.AddPhysicsComponent(EntityID, Velocity, Acceleration, true);
+	int32 PhysicsIndex = ComponentManager.AddPhysicsComponent(EntityID, Mass, Velocity, Acceleration, CollisionRadius, true);
 
 	APKEntityActor* EntityActor = GetWorld()->SpawnActor<APKEntityActor>(APKEntityActor::StaticClass(), Location, Rotation, SpawnParams);
 	if (EntityActor)
