@@ -30,6 +30,7 @@ public:
 	/*
 	 * Variables
 	 */
+	UPROPERTY()
 	UPKEntityManagerSubsystem* EntityManagerSubsystem;
 	PKComponentManager* ComponentManager;
 };

@@ -4,32 +4,53 @@
 
 void UPKPhysicsSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
-	Super::Initialize(Collection);
+    Super::Initialize(Collection);  
 
-	EntityManagerSubsystem = GetWorld()->GetSubsystem<UPKEntityManagerSubsystem>();
-	if (EntityManagerSubsystem)
+    EntityManagerSubsystem = GetWorld()->GetSubsystem<UPKEntityManagerSubsystem>();  
+    if (!EntityManagerSubsystem)  
+    {  
+        UE_LOG(LogTemp, Error, TEXT("PhysicsSubsystem: Failed to get EntityManagerSubsystem!"));  
+    }  
+    else  
+    {  
+        UE_LOG(LogTemp, Log, TEXT("PhysicsSubsystem: Successfully retrieved EntityManagerSubsystem."));  
+    }
+
+	ComponentManager = &EntityManagerSubsystem->GetComponentManager();
+	if (!ComponentManager)
 	{
-		ComponentManager = &EntityManagerSubsystem->GetComponentManager();
+		UE_LOG(LogTemp, Error, TEXT("PhysicsSubsystem: Failed to get ComponentManager!"));
 	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to initialize PhysicsSubsystem: EntityManagerSubsystem not found!"));
-	}
+
+	UE_LOG(LogTemp, Log, TEXT("PhysicsSubsystem initialized."));
 }
 
 void UPKPhysicsSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
 
-	EntityManagerSubsystem = nullptr;
-	ComponentManager = nullptr;
+	UE_LOG(LogTemp, Log, TEXT("PhysicsSubsystem deinitialized."));
 }
 
 void UPKPhysicsSubsystem::Tick(float DeltaTime)
 {
+	if (!EntityManagerSubsystem)
+	{
+		EntityManagerSubsystem = GetWorld()->GetSubsystem<UPKEntityManagerSubsystem>();
+		if (!EntityManagerSubsystem)
+		{
+			//UE_LOG(LogTemp, Error, TEXT("PhysicsSubsystem: Failed to get EntityManagerSubsystem!"));
+			return;
+		}
+		else
+		{
+			//UE_LOG(LogTemp, Log, TEXT("PhysicsSubsystem: Successfully retrieved EntityManagerSubsystem."));
+		}
+	}
+
 	if (!ComponentManager)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PhysicsSubsystem: ComponentManager is null!"));
+		//UE_LOG(LogTemp, Error, TEXT("PhysicsSubsystem: ComponentManager is null!"));
 		return;
 	}
 
@@ -45,13 +66,27 @@ void UPKPhysicsSubsystem::Tick(float DeltaTime)
 		PKTransformComponent* TransformComponent = ComponentManager->GetTransformComponent(PhysicsComponent.EntityID);
 		if (!TransformComponent)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("PhysicsSubsystem: TransformComponent not found for Entity %d"), PhysicsComponent.EntityID);
+			//UE_LOG(LogTemp, Warning, TEXT("PhysicsSubsystem: TransformComponent not found for Entity %d"), PhysicsComponent.EntityID);
 			continue;
 		}
 
 		PhysicsComponent.Velocity += PhysicsComponent.Acceleration * DeltaTime;
 
 		TransformComponent->Position += PhysicsComponent.Velocity * DeltaTime;
+
+		//UE_LOG(LogTemp, Log, TEXT("Entity %d Position: %s"), PhysicsComponent.EntityID, *TransformComponent->Position.ToString());
+
+		AActor* Actor = EntityManagerSubsystem->GetActorForEntity(PhysicsComponent.EntityID);
+		if (Actor)
+		{
+			Actor->SetActorLocation(TransformComponent->Position);
+			//UE_LOG(LogTemp, Log, TEXT("Entity %d Transform Position: %s"), PhysicsComponent.EntityID, *TransformComponent->Position.ToString());
+			//UE_LOG(LogTemp, Log, TEXT("Actor Position: %s"), *Actor->GetActorLocation().ToString());
+		}
+		else
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("PhysicsSubsystem: Actor not found for Entity %d"), PhysicsComponent.EntityID);
+		}
 	}
 }
 
