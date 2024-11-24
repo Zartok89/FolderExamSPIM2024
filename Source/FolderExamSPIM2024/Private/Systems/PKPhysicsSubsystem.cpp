@@ -156,7 +156,10 @@ void UPKPhysicsSubsystem::ResolveCollision(PKTransformComponent& TransformA, PKP
 	PhysicsA.Velocity += Impulse / PhysicsA.Mass;
 	PhysicsB.Velocity -= Impulse / PhysicsB.Mass;
 
-	DrawDebugLine(GetWorld(), TransformA.Position, TransformB.Position, FColor::Red, false, 1.0f, 0, 2.0f);
-	DrawDebugSphere(GetWorld(), TransformA.Position, PhysicsA.CollisionRadius, 12, FColor::Green, false, 1.0f);
-	DrawDebugSphere(GetWorld(), TransformB.Position, PhysicsB.CollisionRadius, 12, FColor::Blue, false, 1.0f);
+	if (bShouldDebug)
+	{
+		DrawDebugLine(GetWorld(), TransformA.Position, TransformB.Position, FColor::Red, false, 1.0f, 0, 2.0f);
+		DrawDebugSphere(GetWorld(), TransformA.Position, PhysicsA.CollisionRadius, 12, FColor::Green, false, 1.0f);
+		DrawDebugSphere(GetWorld(), TransformB.Position, PhysicsB.CollisionRadius, 12, FColor::Blue, false, 1.0f);
+	}
 }

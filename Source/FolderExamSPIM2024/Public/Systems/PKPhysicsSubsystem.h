@@ -35,4 +35,6 @@ public:
 	UPROPERTY()
 	UPKEntityManagerSubsystem* EntityManagerSubsystem;
 	PKComponentManager* ComponentManager;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug")
+	bool bShouldDebug;
 };
