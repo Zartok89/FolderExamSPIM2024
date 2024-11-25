@@ -23,11 +23,19 @@ void UPKPhysicsSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("PhysicsSubsystem initialized."));
+
+	QuadTree = new PKQuadTree(WorldBoundsMin, WorldBoundsMax, 4, 5);
 }
 
 void UPKPhysicsSubsystem::Deinitialize()
 {
 	Super::Deinitialize();
+
+	if (QuadTree)
+	{
+		delete QuadTree;
+		QuadTree = nullptr;
+	}
 
 	UE_LOG(LogTemp, Log, TEXT("PhysicsSubsystem deinitialized."));
 }
@@ -39,19 +47,46 @@ void UPKPhysicsSubsystem::Tick(float DeltaTime)
 		EntityManagerSubsystem = GetWorld()->GetSubsystem<UPKEntityManagerSubsystem>();
 		if (!EntityManagerSubsystem)
 		{
-			//UE_LOG(LogTemp, Error, TEXT("PhysicsSubsystem: Failed to get EntityManagerSubsystem!"));
 			return;
-		}
-		else
-		{
-			//UE_LOG(LogTemp, Log, TEXT("PhysicsSubsystem: Successfully retrieved EntityManagerSubsystem."));
 		}
 	}
 
 	if (!ComponentManager)
 	{
-		//UE_LOG(LogTemp, Error, TEXT("PhysicsSubsystem: ComponentManager is null!"));
 		return;
+	}
+
+	QuadTree->Clear();
+
+	for (int32 i = 0; i < ComponentManager->PhysicsComponents.Num(); ++i)
+	{
+		PKPhysicsComponent& PhysicsComponent = ComponentManager->PhysicsComponents[i];
+
+		if (!PhysicsComponent.bIsSimulating)
+		{
+			continue;
+		}
+
+		PKTransformComponent* TransformComponent = ComponentManager->GetTransformComponent(PhysicsComponent.EntityID);
+		if (!TransformComponent)
+		{
+			continue;
+		}
+
+		PhysicsComponent.Velocity += PhysicsComponent.Acceleration * DeltaTime;
+		TransformComponent->Position += PhysicsComponent.Velocity * DeltaTime;
+
+		AActor* Actor = EntityManagerSubsystem->GetActorForEntity(PhysicsComponent.EntityID);
+		if (Actor)
+		{
+			Actor->SetActorLocation(TransformComponent->Position);
+		}
+
+		QuadTree->Insert(
+			PhysicsComponent.EntityID,
+			FVector2D(TransformComponent->Position.X, TransformComponent->Position.Y),
+			PhysicsComponent.CollisionRadius
+		);
 	}
 
 	for (int32 i = 0; i < ComponentManager->PhysicsComponents.Num(); ++i)
@@ -66,47 +101,45 @@ void UPKPhysicsSubsystem::Tick(float DeltaTime)
 		PKTransformComponent* TransformComponentA = ComponentManager->GetTransformComponent(PhysicsComponentA.EntityID);
 		if (!TransformComponentA)
 		{
-			//UE_LOG(LogTemp, Warning, TEXT("PhysicsSubsystem: TransformComponent not found for Entity %d"), PhysicsComponent.EntityID);
 			continue;
 		}
 
-		PhysicsComponentA.Velocity += PhysicsComponentA.Acceleration * DeltaTime;
-		TransformComponentA->Position += PhysicsComponentA.Velocity * DeltaTime;
+		TArray<int32> NearbyEntities;
+		QuadTree->Query(
+			FVector2D(TransformComponentA->Position.X - PhysicsComponentA.CollisionRadius, TransformComponentA->Position.Y - PhysicsComponentA.CollisionRadius),
+			FVector2D(TransformComponentA->Position.X + PhysicsComponentA.CollisionRadius, TransformComponentA->Position.Y + PhysicsComponentA.CollisionRadius),
+			NearbyEntities
+		);
 
-		//UE_LOG(LogTemp, Log, TEXT("Entity %d Position: %s"), PhysicsComponent.EntityID, *TransformComponent->Position.ToString());
-
-		for (int32 j = i + 1; j < ComponentManager->PhysicsComponents.Num(); ++j)
+		for (int32 NearbyEntityID : NearbyEntities)
 		{
-			PKPhysicsComponent& PhysicsComponentB = ComponentManager->PhysicsComponents[j];
-
-			if (!PhysicsComponentB.bIsSimulating)
+			if (NearbyEntityID == PhysicsComponentA.EntityID)
 			{
 				continue;
 			}
 
-			PKTransformComponent* TransformComponentB = ComponentManager->GetTransformComponent(PhysicsComponentB.EntityID);
-			if (!TransformComponentB)
+			PKPhysicsComponent* PhysicsComponentB = ComponentManager->GetPhysicsComponent(NearbyEntityID);
+			PKTransformComponent* TransformComponentB = ComponentManager->GetTransformComponent(NearbyEntityID);
+
+			if (!PhysicsComponentB || !TransformComponentB || !PhysicsComponentB->bIsSimulating)
 			{
 				continue;
 			}
 
-			// Check for overlap (simple AABB collision detection)
 			FVector Delta = TransformComponentA->Position - TransformComponentB->Position;
 			float DistanceSquared = Delta.SizeSquared();
-			float MinDistance = PhysicsComponentA.CollisionRadius + PhysicsComponentB.CollisionRadius;
+			float MinDistance = PhysicsComponentA.CollisionRadius + PhysicsComponentB->CollisionRadius;
 
 			if (DistanceSquared < MinDistance * MinDistance)
 			{
-				// Resolve collision
-				ResolveCollision(*TransformComponentA, PhysicsComponentA, *TransformComponentB, PhysicsComponentB);
+				ResolveCollision(*TransformComponentA, PhysicsComponentA, *TransformComponentB, *PhysicsComponentB);
 			}
 		}
+	}
 
-		AActor* ActorA = EntityManagerSubsystem->GetActorForEntity(PhysicsComponentA.EntityID);
-		if (ActorA)
-		{
-			ActorA->SetActorLocation(TransformComponentA->Position);
-		}
+	if (bShouldDebug)
+	{
+		QuadTree->DrawDebug(GetWorld(), 0.1f);
 	}
 }
 

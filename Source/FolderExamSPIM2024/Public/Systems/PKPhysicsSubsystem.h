@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "PKComponentManager.h"
 #include "PKEntityManagerSubsystem.h"
+#include "PKQuadTree.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "PKPhysicsSubsystem.generated.h"
 
@@ -21,7 +22,7 @@ public:
 
 	virtual void Deinitialize() override;
 
-	virtual void Tick(float DeltaTime);
+	virtual void Tick(float DeltaTime) override;
 
 	virtual TStatId GetStatId() const override;
 
@@ -34,7 +35,18 @@ public:
 	 */
 	UPROPERTY()
 	UPKEntityManagerSubsystem* EntityManagerSubsystem;
+
 	PKComponentManager* ComponentManager;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug")
 	bool bShouldDebug;
+
+	/*QuadTree*/
+	PKQuadTree* QuadTree;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	FVector2D WorldBoundsMin = FVector2D(-1000.0f, -1000.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	FVector2D WorldBoundsMax = FVector2D(1000.0f, 1000.0f);
 };
