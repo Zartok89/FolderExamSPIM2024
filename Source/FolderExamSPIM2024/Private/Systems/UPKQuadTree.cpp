@@ -1,39 +1,54 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+#include "Systems/UPKQuadTree.h"
+//
+//UPKQuadTree::UPKQuadTree(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax)
+//	: RootNode(), MaxEntitiesPerNode(0), MaxDepth(0)
+//{
+//	RootNode = new PKQuadTreeNode(InBoundsMin, InBoundsMax);
+//}
 
-#include "Systems/PKQuadTree.h"
+UPKQuadTree::UPKQuadTree()
+	: RootNode(nullptr), MaxEntitiesPerNode(4), MaxDepth(10)
+{
+}
 
-PKQuadTree::PKQuadTree(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax, int32 InMaxEntitiesPerNode, int32 InMaxDepth) : MaxEntitiesPerNode(InMaxEntitiesPerNode), MaxDepth(InMaxDepth)
+UPKQuadTree::UPKQuadTree(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer), RootNode(nullptr), MaxEntitiesPerNode(4), MaxDepth(10)
+{
+}
+
+void UPKQuadTree::Initialize(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax, int InMaxEntitiesPerNode, int InMaxDepth)
 {
 	RootNode = new PKQuadTreeNode(InBoundsMin, InBoundsMax);
+	MaxEntitiesPerNode = 4;
+	MaxDepth = 10;
 }
 
-PKQuadTree::~PKQuadTree()
-{
-	delete RootNode;
-}
-
-void PKQuadTree::Insert(int32 EntityID, const FVector2D& Position, float Radius)
+void UPKQuadTree::Insert(int32 EntityID, const FVector2D& Position, float Radius)
 {
 	Insert(RootNode, EntityID, Position, Radius, 0);
 }
 
-void PKQuadTree::Remove(int32 EntityID, const FVector2D& Position, float Radius)
+void UPKQuadTree::Remove(int32 EntityID, const FVector2D& Position, float Radius)
 {
 	Remove(RootNode, EntityID, Position, Radius);
 }
 
-void PKQuadTree::Query(const FVector2D& QueryMin, const FVector2D& QueryMax, TArray<int32>& OutResults) const
+void UPKQuadTree::Query(const FVector2D& QueryMin, const FVector2D& QueryMax, TArray<int32>& OutResults) const
 {
 	Query(RootNode, QueryMin, QueryMax, OutResults);
 }
 
-void PKQuadTree::Clear()
+void UPKQuadTree::Clear()
 {
+	if (RootNode == nullptr)
+	{
+		return;
+	}
 	delete RootNode;
 	RootNode = new PKQuadTreeNode(RootNode->BoundsMin, RootNode->BoundsMax);
 }
 
-void PKQuadTree::Subdivide(PKQuadTreeNode* Node)
+void UPKQuadTree::Subdivide(PKQuadTreeNode* Node)
 {
 	FVector2D Center = (Node->BoundsMin + Node->BoundsMax) * 0.5f;
 
@@ -43,7 +58,7 @@ void PKQuadTree::Subdivide(PKQuadTreeNode* Node)
 	Node->Children[3] = new PKQuadTreeNode(Center, Node->BoundsMax);
 }
 
-void PKQuadTree::Insert(PKQuadTreeNode* Node, int32 EntityID, const FVector2D& Position, float Radius, int32 Depth)
+void UPKQuadTree::Insert(PKQuadTreeNode* Node, int32 EntityID, const FVector2D& Position, float Radius, int32 Depth)
 {
 	if (Node == RootNode)
 	{
@@ -72,7 +87,7 @@ void PKQuadTree::Insert(PKQuadTreeNode* Node, int32 EntityID, const FVector2D& P
 	}
 }
 
-void PKQuadTree::Remove(PKQuadTreeNode* Node, int32 EntityID, const FVector2D& Position, float Radius)
+void UPKQuadTree::Remove(PKQuadTreeNode* Node, int32 EntityID, const FVector2D& Position, float Radius)
 {
 	if (Node == RootNode)
 	{
@@ -94,7 +109,7 @@ void PKQuadTree::Remove(PKQuadTreeNode* Node, int32 EntityID, const FVector2D& P
 	}
 }
 
-void PKQuadTree::Query(PKQuadTreeNode* Node, const FVector2D& QueryMin, const FVector2D& QueryMax, TArray<int32>& OutResults) const
+void UPKQuadTree::Query(PKQuadTreeNode* Node, const FVector2D& QueryMin, const FVector2D& QueryMax, TArray<int32>& OutResults) const
 {
 	if (!Overlaps(Node->BoundsMin, Node->BoundsMax, QueryMin, QueryMax))
 	{
@@ -114,7 +129,7 @@ void PKQuadTree::Query(PKQuadTreeNode* Node, const FVector2D& QueryMin, const FV
 	}
 }
 
-void PKQuadTree::DrawDebug(UWorld* World, float Lifetime) const
+void UPKQuadTree::DrawDebug(UWorld* World, float Lifetime) const
 {
 	if (!World || !RootNode)
 	{
@@ -130,7 +145,7 @@ void PKQuadTree::DrawDebug(UWorld* World, float Lifetime) const
 	}
 }
 
-void PKQuadTree::DrawDebugNode(UWorld* World, PKQuadTreeNode* Node, float Lifetime) const
+void UPKQuadTree::DrawDebugNode(UWorld* World, PKQuadTreeNode* Node, float Lifetime) const
 {
 	if (!Node)
 	{
@@ -151,7 +166,7 @@ void PKQuadTree::DrawDebugNode(UWorld* World, PKQuadTreeNode* Node, float Lifeti
 	}
 }
 
-bool PKQuadTree::Overlaps(const FVector2D& MinA, const FVector2D& MaxA, const FVector2D& MinB, const FVector2D& MaxB) const
+bool UPKQuadTree::Overlaps(const FVector2D& MinA, const FVector2D& MaxA, const FVector2D& MinB, const FVector2D& MaxB) const
 {
 	return !(MinA.X > MaxB.X || MaxA.X < MinB.X || MinA.Y > MaxB.Y || MaxA.Y < MinB.Y);
 }

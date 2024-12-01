@@ -24,7 +24,15 @@ void UPKPhysicsSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 	UE_LOG(LogTemp, Log, TEXT("PhysicsSubsystem initialized."));
 
-	QuadTree = new PKQuadTree(WorldBoundsMin, WorldBoundsMax, 4, 5);
+	// When creating a new object of a class in Unreal, you have to set the properties after constructing the new object, which means u cannot add parameters directly into the constructor
+	QuadTree = NewObject<UPKQuadTree>();
+	QuadTree->Initialize(WorldBoundsMin, WorldBoundsMax, 5, 5);
+
+ //   QuadTree = NewObject<UPKQuadTree>(this, UPKQuadTree::StaticClass(),FName("Hey"));
+	//QuadTree->MaxDepth = MaxDepth;
+	//QuadTree->MaxEntitiesPerNode = MaxEntitiesPerNode;
+	//QuadTree->RootNode->BoundsMax = WorldBoundsMax;
+	//QuadTree->RootNode->BoundsMin = WorldBoundsMin;
 }
 
 void UPKPhysicsSubsystem::Deinitialize()
@@ -33,7 +41,6 @@ void UPKPhysicsSubsystem::Deinitialize()
 
 	if (QuadTree)
 	{
-		delete QuadTree;
 		QuadTree = nullptr;
 	}
 

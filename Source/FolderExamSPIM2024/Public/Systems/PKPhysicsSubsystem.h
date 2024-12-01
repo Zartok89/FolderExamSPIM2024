@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "PKComponentManager.h"
 #include "PKEntityManagerSubsystem.h"
-#include "PKQuadTree.h"
+#include "UPKQuadTree.h"
 #include "Subsystems/WorldSubsystem.h"
 #include "PKPhysicsSubsystem.generated.h"
 
@@ -42,11 +42,18 @@ public:
 	bool bShouldDebug;
 
 	/*QuadTree*/
-	PKQuadTree* QuadTree;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Debug")
+	UPKQuadTree* QuadTree;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
-	FVector2D WorldBoundsMin = FVector2D(-1000.0f, -1000.0f);
+	FVector2D WorldBoundsMin = FVector2D(-10000.0f, -10000.0f);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
-	FVector2D WorldBoundsMax = FVector2D(1000.0f, 1000.0f);
+	FVector2D WorldBoundsMax = FVector2D(10000.0f, 10000.0f);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	int MaxDepth = 4;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
+	int MaxEntitiesPerNode = 4;
 };

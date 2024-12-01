@@ -1,8 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UPKQuadTree.generated.h"
 
 struct PKQuadTreeNode
 {
@@ -36,11 +35,17 @@ struct PKQuadTreeNode
 /**
  *
  */
-class FOLDEREXAMSPIM2024_API PKQuadTree
+UCLASS(BlueprintType)
+class FOLDEREXAMSPIM2024_API UPKQuadTree : public UObject
 {
+	GENERATED_BODY()
+
 public:
-	PKQuadTree(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax, int32 InMaxEntitiesPerNode = 4, int32 InMaxDepth = 5);
-	~PKQuadTree();
+	UPKQuadTree();
+
+	UPKQuadTree(const FObjectInitializer& ObjectInitializer);
+
+	void Initialize(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax, int InMaxEntitiesPerNode, int InMaxDepth);
 
 	void Insert(int32 EntityID, const FVector2D& Position, float Radius);
 	void Remove(int32 EntityID, const FVector2D& Position, float Radius);

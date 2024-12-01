@@ -7,7 +7,7 @@ APKEntityActor::APKEntityActor()
 	EntityMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("EntityMesh"));
 	SetRootComponent(EntityMesh);
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
-	AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetIncludingScale);
+	BoxCollision->SetupAttachment(GetRootComponent());
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultMesh(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
 	if (DefaultMesh.Succeeded())
