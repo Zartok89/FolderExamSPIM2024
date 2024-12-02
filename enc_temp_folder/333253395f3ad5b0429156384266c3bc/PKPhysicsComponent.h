@@ -19,7 +19,7 @@ public:
 	int32 EntityID;
 	FVector Velocity;
 	FVector Acceleration;
-	float CollisionRadius = 50.f;
-	float Mass = 1.f;
+	float CollisionRadius;
+	float Mass {1.f};
 	bool bIsSimulating;
 };

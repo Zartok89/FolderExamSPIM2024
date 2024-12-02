@@ -61,6 +61,8 @@ void UPKPhysicsSubsystem::Deinitialize()
 
 void UPKPhysicsSubsystem::Tick(float DeltaTime)
 {
+	//TODO: Create a "Do once" function to set variables. Hard to set new variables for subsystems since they are created on "initialize"
+
 	if (!EntityManagerSubsystem)
 	{
 		EntityManagerSubsystem = GetWorld()->GetSubsystem<UPKEntityManagerSubsystem>();

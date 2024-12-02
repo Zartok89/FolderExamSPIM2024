@@ -49,10 +49,10 @@ public:
 	UPKQuadTree* QuadTree;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
-	FVector2D WorldBoundsMin = FVector2D(-10000.0f, -5000.f);
+	FVector2D WorldBoundsMin = FVector2D(-10000.0f, -10000.0f);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
-	FVector2D WorldBoundsMax = FVector2D(10000.0f, 5000.f);
+	FVector2D WorldBoundsMax = FVector2D(10000.0f, 10000.0f);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
 	int MaxDepth;

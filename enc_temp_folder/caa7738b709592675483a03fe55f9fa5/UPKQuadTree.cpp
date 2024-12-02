@@ -77,7 +77,7 @@ void UPKQuadTree::Insert(PKQuadTreeNode* Node, int32 EntityID, const FVector2D& 
 		EntityPositions.Add(EntityID, Position);
 	}
 
-    //UE_LOG(LogTemp, Log, TEXT("Insert: MaxEntitiesPerNode = %d, MaxDepth = %d"), MaxEntitiesPerNode, MaxDepth);  
+    UE_LOG(LogTemp, Log, TEXT("Insert: MaxEntitiesPerNode = %d, MaxDepth = %d"), MaxEntitiesPerNode, MaxDepth);  
 
     if (Node->IsLeaf())  
     {  
@@ -169,7 +169,7 @@ void UPKQuadTree::DrawDebugNode(UWorld* World, PKQuadTreeNode* Node, float Lifet
 	FVector Center = FVector((Node->BoundsMin.X + Node->BoundsMax.X) * 0.5f, (Node->BoundsMin.Y + Node->BoundsMax.Y) * 0.5f, 0.0f);
 	FVector Extent = FVector((Node->BoundsMax.X - Node->BoundsMin.X) * 0.5f, (Node->BoundsMax.Y - Node->BoundsMin.Y) * 0.5f, 0.0f);
 
-	DrawDebugBox(World, Center, Extent, FColor::Purple, false, Lifetime, 0, 40.0f);
+	DrawDebugBox(World, Center, Extent, FColor::Blue, false, Lifetime, 0, 5.0f);
 
 	for (PKQuadTreeNode* Child : Node->Children)
 	{
