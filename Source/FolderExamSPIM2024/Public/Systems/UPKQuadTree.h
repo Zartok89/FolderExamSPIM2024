@@ -43,9 +43,10 @@ class FOLDEREXAMSPIM2024_API UPKQuadTree : public UObject
 public:
 	UPKQuadTree();
 
-	UPKQuadTree(const FObjectInitializer& ObjectInitializer);
+	//UPKQuadTree(const FObjectInitializer& ObjectInitializer);
 
-	void Initialize(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax, int InMaxEntitiesPerNode, int InMaxDepth);
+	void Initialize(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax, int& InMaxEntitiesPerNode, int& InMaxDepth);
+	void Update(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax, int& InMaxEntitiesPerNode, int& InMaxDepth);
 
 	void Insert(int32 EntityID, const FVector2D& Position, float Radius);
 	void Remove(int32 EntityID, const FVector2D& Position, float Radius);
@@ -67,7 +68,10 @@ public:
 	 * Variables
 	 */
 	PKQuadTreeNode* RootNode;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 MaxEntitiesPerNode;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 MaxDepth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<int32, FVector2D> EntityPositions;
 };

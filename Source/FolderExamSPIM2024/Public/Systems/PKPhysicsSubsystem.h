@@ -20,6 +20,9 @@ class FOLDEREXAMSPIM2024_API UPKPhysicsSubsystem : public UTickableWorldSubsyste
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
+	UFUNCTION(BlueprintCallable)
+	void UpdateQuadTree();
+
 	virtual void Deinitialize() override;
 
 	virtual void Tick(float DeltaTime) override;
@@ -52,8 +55,8 @@ public:
 	FVector2D WorldBoundsMax = FVector2D(10000.0f, 10000.0f);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
-	int MaxDepth = 4;
+	int MaxDepth;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
-	int MaxEntitiesPerNode = 4;
+	int MaxEntitiesPerNode;
 };

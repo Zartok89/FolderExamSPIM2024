@@ -25,14 +25,26 @@ void UPKPhysicsSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	UE_LOG(LogTemp, Log, TEXT("PhysicsSubsystem initialized."));
 
 	// When creating a new object of a class in Unreal, you have to set the properties after constructing the new object, which means u cannot add parameters directly into the constructor
-	QuadTree = NewObject<UPKQuadTree>();
-	QuadTree->Initialize(WorldBoundsMin, WorldBoundsMax, 5, 5);
+	MaxEntitiesPerNode = 4;
+	MaxDepth = 10;
+	QuadTree = NewObject<UPKQuadTree>(UPKQuadTree::StaticClass());
+	QuadTree->Initialize(WorldBoundsMin, WorldBoundsMax, MaxEntitiesPerNode, MaxDepth);
+}
 
- //   QuadTree = NewObject<UPKQuadTree>(this, UPKQuadTree::StaticClass(),FName("Hey"));
-	//QuadTree->MaxDepth = MaxDepth;
-	//QuadTree->MaxEntitiesPerNode = MaxEntitiesPerNode;
-	//QuadTree->RootNode->BoundsMax = WorldBoundsMax;
-	//QuadTree->RootNode->BoundsMin = WorldBoundsMin;
+void UPKPhysicsSubsystem::UpdateQuadTree()
+{
+	if (QuadTree)
+	{
+		QuadTree->Clear();
+		QuadTree->Initialize(WorldBoundsMin, WorldBoundsMax, MaxEntitiesPerNode, MaxDepth);
+	}
+	else
+	{
+		QuadTree = NewObject<UPKQuadTree>(UPKQuadTree::StaticClass());
+		QuadTree->Initialize(WorldBoundsMin, WorldBoundsMax, MaxEntitiesPerNode, MaxDepth);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("QuadTree reinitialized with MaxEntitiesPerNode = %d, MaxDepth = %d"), MaxEntitiesPerNode, MaxDepth);
 }
 
 void UPKPhysicsSubsystem::Deinitialize()
@@ -49,6 +61,8 @@ void UPKPhysicsSubsystem::Deinitialize()
 
 void UPKPhysicsSubsystem::Tick(float DeltaTime)
 {
+	//TODO: Create a "Do once" function to set variables. Hard to set new variables for subsystems since they are created on "initialize"
+
 	if (!EntityManagerSubsystem)
 	{
 		EntityManagerSubsystem = GetWorld()->GetSubsystem<UPKEntityManagerSubsystem>();

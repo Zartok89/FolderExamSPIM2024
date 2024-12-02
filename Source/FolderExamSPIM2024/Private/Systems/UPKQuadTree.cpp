@@ -7,20 +7,32 @@
 //}
 
 UPKQuadTree::UPKQuadTree()
-	: RootNode(nullptr), MaxEntitiesPerNode(4), MaxDepth(10)
 {
 }
+//
+//UPKQuadTree::UPKQuadTree(const FObjectInitializer& ObjectInitializer)
+//	: Super(ObjectInitializer), RootNode(nullptr), MaxEntitiesPerNode(4), MaxDepth(10)
+//{
+//}
 
-UPKQuadTree::UPKQuadTree(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer), RootNode(nullptr), MaxEntitiesPerNode(4), MaxDepth(10)
+void UPKQuadTree::Initialize(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax, int& InMaxEntitiesPerNode, int& InMaxDepth)
 {
-}
-
-void UPKQuadTree::Initialize(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax, int InMaxEntitiesPerNode, int InMaxDepth)
-{
+	MaxEntitiesPerNode = InMaxEntitiesPerNode;
+	MaxDepth = InMaxDepth;
 	RootNode = new PKQuadTreeNode(InBoundsMin, InBoundsMax);
-	MaxEntitiesPerNode = 4;
-	MaxDepth = 10;
+}
+
+void UPKQuadTree::Update(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax, int& InMaxEntitiesPerNode, int& InMaxDepth)
+{
+	UE_LOG(LogTemp, Log, TEXT("QuadTree Update called with MaxEntitiesPerNode: %d, MaxDepth: %d"), InMaxEntitiesPerNode, InMaxDepth);
+
+	if (RootNode == nullptr) { return; }
+	delete RootNode;
+
+	MaxEntitiesPerNode = InMaxEntitiesPerNode;
+	MaxDepth = InMaxDepth;
+
+	RootNode = new PKQuadTreeNode(InBoundsMin, InBoundsMax);
 }
 
 void UPKQuadTree::Insert(int32 EntityID, const FVector2D& Position, float Radius)
@@ -65,26 +77,28 @@ void UPKQuadTree::Insert(PKQuadTreeNode* Node, int32 EntityID, const FVector2D& 
 		EntityPositions.Add(EntityID, Position);
 	}
 
-	if (Node->IsLeaf())
-	{
-		if (Node->EntityIDs.Num() < MaxEntitiesPerNode || Depth >= MaxDepth)
-		{
-			Node->EntityIDs.Add(EntityID);
-			return;
-		}
+    UE_LOG(LogTemp, Log, TEXT("Insert: MaxEntitiesPerNode = %d, MaxDepth = %d"), MaxEntitiesPerNode, MaxDepth);  
 
-		Subdivide(Node);
-	}
+    if (Node->IsLeaf())  
+    {  
+        if (Node->EntityIDs.Num() < MaxEntitiesPerNode || Depth >= MaxDepth)  
+        {  
+            Node->EntityIDs.Add(EntityID);  
+            return;  
+        }  
 
-	FVector2D Center = (Node->BoundsMin + Node->BoundsMax) * 0.5f;
+        Subdivide(Node);  
+    }  
 
-	for (PKQuadTreeNode* Child : Node->Children)
-	{
-		if (Overlaps(Child->BoundsMin, Child->BoundsMax, Position - FVector2D(Radius, Radius), Position + FVector2D(Radius, Radius)))
-		{
-			Insert(Child, EntityID, Position, Radius, Depth + 1);
-		}
-	}
+    FVector2D Center = (Node->BoundsMin + Node->BoundsMax) * 0.5f;  
+
+    for (PKQuadTreeNode* Child : Node->Children)  
+    {  
+        if (Overlaps(Child->BoundsMin, Child->BoundsMax, Position - FVector2D(Radius, Radius), Position + FVector2D(Radius, Radius)))  
+        {  
+            Insert(Child, EntityID, Position, Radius, Depth + 1);  
+        }  
+    }  
 }
 
 void UPKQuadTree::Remove(PKQuadTreeNode* Node, int32 EntityID, const FVector2D& Position, float Radius)
@@ -155,7 +169,7 @@ void UPKQuadTree::DrawDebugNode(UWorld* World, PKQuadTreeNode* Node, float Lifet
 	FVector Center = FVector((Node->BoundsMin.X + Node->BoundsMax.X) * 0.5f, (Node->BoundsMin.Y + Node->BoundsMax.Y) * 0.5f, 0.0f);
 	FVector Extent = FVector((Node->BoundsMax.X - Node->BoundsMin.X) * 0.5f, (Node->BoundsMax.Y - Node->BoundsMin.Y) * 0.5f, 0.0f);
 
-	DrawDebugBox(World, Center, Extent, FColor::Blue, false, Lifetime, 0, 2.0f);
+	DrawDebugBox(World, Center, Extent, FColor::Blue, false, Lifetime, 0, 5.0f);
 
 	for (PKQuadTreeNode* Child : Node->Children)
 	{
