@@ -33,6 +33,8 @@ public:
 
 	void ResolveCollision(PKTransformComponent& TransformA, PKPhysicsComponent& PhysicsA, PKTransformComponent& TransformB, PKPhysicsComponent& PhysicsB);
 
+	void HandleBoundaryCollision(FVector& Position, FVector& Velocity, FVector& Acceleration, float CollisionRadius, const FVector2D& BoundsMin, const FVector2D& BoundsMax);
+
 	/*
 	 * Variables
 	 */
@@ -53,7 +55,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
 	FVector2D WorldBoundsMax = FVector2D(10000.0f, 5000.f);
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
 	int MaxDepth;
 

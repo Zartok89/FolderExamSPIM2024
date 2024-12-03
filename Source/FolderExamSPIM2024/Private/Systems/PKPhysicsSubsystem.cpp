@@ -24,7 +24,6 @@ void UPKPhysicsSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 	UE_LOG(LogTemp, Log, TEXT("PhysicsSubsystem initialized."));
 
-	// When creating a new object of a class in Unreal, you have to set the properties after constructing the new object, which means u cannot add parameters directly into the constructor
 	MaxEntitiesPerNode = 4;
 	MaxDepth = 10;
 	QuadTree = NewObject<UPKQuadTree>(UPKQuadTree::StaticClass());
@@ -93,7 +92,22 @@ void UPKPhysicsSubsystem::Tick(float DeltaTime)
 		}
 
 		PhysicsComponent.Velocity += PhysicsComponent.Acceleration * DeltaTime;
-		TransformComponent->Position += PhysicsComponent.Velocity * DeltaTime;
+		float Friction = QuadTree->GetFrictionForPosition(FVector2D(TransformComponent->Position.X, TransformComponent->Position.Y));
+		PhysicsComponent.Velocity *= Friction;
+		TransformComponent->Position.X += PhysicsComponent.Velocity.X * DeltaTime;
+		TransformComponent->Position.Y += PhysicsComponent.Velocity.Y * DeltaTime;
+		TransformComponent->Position.Z = 30.f;
+
+		FVector2D RootBoundsMin = QuadTree->RootNode->BoundsMin;
+		FVector2D RootBoundsMax = QuadTree->RootNode->BoundsMax;
+		HandleBoundaryCollision(
+			TransformComponent->Position,
+			PhysicsComponent.Velocity,
+			PhysicsComponent.Acceleration,
+			PhysicsComponent.CollisionRadius,
+			RootBoundsMin,
+			RootBoundsMax
+		);
 
 		AActor* Actor = EntityManagerSubsystem->GetActorForEntity(PhysicsComponent.EntityID);
 		if (Actor)
@@ -211,7 +225,41 @@ void UPKPhysicsSubsystem::ResolveCollision(PKTransformComponent& TransformA, PKP
 	if (bShouldDebug)
 	{
 		DrawDebugLine(GetWorld(), TransformA.Position, TransformB.Position, FColor::Red, false, 1.0f, 0, 2.0f);
-		DrawDebugSphere(GetWorld(), TransformA.Position, PhysicsA.CollisionRadius, 12, FColor::Green, false, 1.0f);
+		DrawDebugSphere(GetWorld(), TransformA.Position, PhysicsA.CollisionRadius, 12, FColor::Red, false, 1.0f);
 		DrawDebugSphere(GetWorld(), TransformB.Position, PhysicsB.CollisionRadius, 12, FColor::Blue, false, 1.0f);
 	}
+}
+
+void UPKPhysicsSubsystem::HandleBoundaryCollision(FVector& Position, FVector& Velocity, FVector& Acceleration, float CollisionRadius, const FVector2D& BoundsMin, const FVector2D& BoundsMax)
+{
+    const float Restitution = 0.8f;  
+
+    if (Position.X - CollisionRadius < BoundsMin.X)  
+    {  
+        Position.X = BoundsMin.X + CollisionRadius;  
+        Velocity.X *= -Restitution;
+        Acceleration.X *= -Restitution;  
+    }  
+    else if (Position.X + CollisionRadius > BoundsMax.X)  
+    {  
+        Position.X = BoundsMax.X - CollisionRadius; 
+        Velocity.X *= -Restitution; 
+        Acceleration.X *= -Restitution;
+    }  
+
+    if (Position.Y - CollisionRadius < BoundsMin.Y)  
+    {  
+        Position.Y = BoundsMin.Y + CollisionRadius;
+        Velocity.Y *= -Restitution;  
+        Acceleration.Y *= -Restitution; 
+    }  
+    else if (Position.Y + CollisionRadius > BoundsMax.Y)  
+    {  
+        Position.Y = BoundsMax.Y - CollisionRadius;
+        Velocity.Y *= -Restitution; 
+        Acceleration.Y *= -Restitution;  
+    }  
+
+    const float MaxVelocity = 1000.0f;
+    Velocity = Velocity.GetClampedToMaxSize(MaxVelocity); 
 }

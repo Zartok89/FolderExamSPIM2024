@@ -5,7 +5,7 @@
 
 struct PKQuadTreeNode
 {
-	PKQuadTreeNode(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax) : BoundsMin(InBoundsMin), BoundsMax(InBoundsMax)
+	PKQuadTreeNode(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax) : BoundsMin(InBoundsMin), BoundsMax(InBoundsMax), FrictionCoefficient(1.0f)
 	{
 		Children.SetNum(4);
 	}
@@ -30,6 +30,7 @@ struct PKQuadTreeNode
 	FVector2D BoundsMax;
 	TArray<int32> EntityIDs;
 	TArray<PKQuadTreeNode*> Children;
+	float FrictionCoefficient;
 };
 
 /**
@@ -63,6 +64,8 @@ public:
 	void DrawDebugNode(UWorld* World, PKQuadTreeNode* Node, float Lifetime) const;
 
 	bool Overlaps(const FVector2D& MinA, const FVector2D& MaxA, const FVector2D& MinB, const FVector2D& MaxB) const;
+	float GetFrictionForPosition(const FVector2D& Position) const;
+	PKQuadTreeNode* GetNodeForPosition(PKQuadTreeNode* Node, const FVector2D& Position) const;
 
 	/*
 	 * Variables
