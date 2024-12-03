@@ -224,7 +224,7 @@ void UPKPhysicsSubsystem::ResolveCollision(PKTransformComponent& TransformA, PKP
 
 	if (bShouldDebug)
 	{
-		DrawDebugLine(GetWorld(), TransformA.Position, TransformB.Position, FColor::Red, false, 1.0f, 0, 2.0f);
+		//DrawDebugLine(GetWorld(), TransformA.Position, TransformB.Position, FColor::Red, false, 1.0f, 0, 2.0f);
 		DrawDebugSphere(GetWorld(), TransformA.Position, PhysicsA.CollisionRadius, 12, FColor::Red, false, 1.0f);
 		DrawDebugSphere(GetWorld(), TransformB.Position, PhysicsB.CollisionRadius, 12, FColor::Blue, false, 1.0f);
 	}

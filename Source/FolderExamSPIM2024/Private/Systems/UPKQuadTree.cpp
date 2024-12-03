@@ -60,10 +60,10 @@ void UPKQuadTree::Subdivide(PKQuadTreeNode* Node)
 
 	if (Node == RootNode)
 	{
-		Node->Children[0]->FrictionCoefficient = 1.02f; // BL
-		Node->Children[1]->FrictionCoefficient = 1.15f; // TL
-		Node->Children[2]->FrictionCoefficient = 1.1f; // BR
-		Node->Children[3]->FrictionCoefficient = 1.03f; // TR
+		Node->Children[0]->FrictionCoefficient = 0.99f; // BL
+		Node->Children[1]->FrictionCoefficient = 1.02f; // TL
+		Node->Children[2]->FrictionCoefficient = 1.05f; // BR
+		Node->Children[3]->FrictionCoefficient = 0.94f; // TR
 	}
 	else
 	{
@@ -156,11 +156,11 @@ void UPKQuadTree::DrawDebug(UWorld* World, float Lifetime) const
 
 	DrawDebugNode(World, RootNode, Lifetime);
 
-	for (const auto& Entity : EntityPositions)
-	{
-		const FVector2D& Position = Entity.Value;
-		DrawDebugSphere(World, FVector(Position.X, Position.Y, 35.0f), 50.0f, 12, FColor::Green, false, Lifetime);
-	}
+	//for (const auto& Entity : EntityPositions)
+	//{
+	//	const FVector2D& Position = Entity.Value;
+	//	DrawDebugSphere(World, FVector(Position.X, Position.Y, 35.0f), 50.0f, 12, FColor::Green, false, Lifetime);
+	//}
 }
 
 void UPKQuadTree::DrawDebugNode(UWorld* World, PKQuadTreeNode* Node, float Lifetime) const
@@ -173,10 +173,7 @@ void UPKQuadTree::DrawDebugNode(UWorld* World, PKQuadTreeNode* Node, float Lifet
 	FVector Center = FVector((Node->BoundsMin.X + Node->BoundsMax.X) * 0.5f, (Node->BoundsMin.Y + Node->BoundsMax.Y) * 0.5f, 0.0f);
 	FVector Extent = FVector((Node->BoundsMax.X - Node->BoundsMin.X) * 0.5f, (Node->BoundsMax.Y - Node->BoundsMin.Y) * 0.5f, 0.0f);
 
-	//DrawDebugBox(World, Center, Extent, FColor::Purple, false, Lifetime, 0, 40.0f);
-
-	FColor Color = FColor::MakeRedToGreenColorFromScalar(Node->FrictionCoefficient);
-	DrawDebugBox(World, Center, Extent, Color, false, Lifetime, 0, 40.0f);
+	DrawDebugBox(World, Center, Extent, FColor::Purple, false, Lifetime, 0, 40.0f);
 
 	for (PKQuadTreeNode* Child : Node->Children)
 	{
