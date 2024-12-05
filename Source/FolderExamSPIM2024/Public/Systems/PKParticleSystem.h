@@ -54,10 +54,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Particle System")
 	float EmissionRate = 0.1f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Particle System")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Particle System", meta = (MakeEditWidget = "true"))
 	FVector Gravity = FVector(0.0f, 0.0f, -980.0f);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Particle System")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Particle System", meta = (MakeEditWidget = "true"))
 	FVector Wind = FVector(200.0f, 0.0f, 0.0f);
 
 	/*Structures of Arrays*/

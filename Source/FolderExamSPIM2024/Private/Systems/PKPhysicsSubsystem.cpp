@@ -24,8 +24,8 @@ void UPKPhysicsSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 	UE_LOG(LogTemp, Log, TEXT("PhysicsSubsystem initialized."));
 
-	MaxEntitiesPerNode = 4;
-	MaxDepth = 10;
+	MaxEntitiesPerNode = 1;
+	MaxDepth = 20;
 	QuadTree = NewObject<UPKQuadTree>(UPKQuadTree::StaticClass());
 	QuadTree->Initialize(WorldBoundsMin, WorldBoundsMax, MaxEntitiesPerNode, MaxDepth);
 }
