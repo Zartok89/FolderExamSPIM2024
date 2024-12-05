@@ -35,6 +35,8 @@ public:
 
 	void HandleBoundaryCollision(FVector& Position, FVector& Velocity, FVector& Acceleration, float CollisionRadius, const FVector2D& BoundsMin, const FVector2D& BoundsMax);
 
+
+
 	/*
 	 * Variables
 	 */
@@ -61,4 +63,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Physics")
 	int MaxEntitiesPerNode;
+
+	float MaxVelocity = 1000.0f;
 };

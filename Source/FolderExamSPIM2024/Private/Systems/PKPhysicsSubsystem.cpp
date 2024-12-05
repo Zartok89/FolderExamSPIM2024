@@ -2,6 +2,9 @@
 
 #include "Systems/PKPhysicsSubsystem.h"
 
+#include "DrawDebugHelpers.h"
+#include "Engine/World.h"
+
 void UPKPhysicsSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
@@ -260,6 +263,5 @@ void UPKPhysicsSubsystem::HandleBoundaryCollision(FVector& Position, FVector& Ve
         Acceleration.Y *= -Restitution;  
     }  
 
-    const float MaxVelocity = 1000.0f;
     Velocity = Velocity.GetClampedToMaxSize(MaxVelocity); 
 }

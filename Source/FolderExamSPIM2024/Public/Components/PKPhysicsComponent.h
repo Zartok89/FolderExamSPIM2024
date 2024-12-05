@@ -17,9 +17,9 @@ public:
 	 * Variables
 	 */
 	int32 EntityID;
+	float Mass = 1.f;
 	FVector Velocity;
 	FVector Acceleration;
 	float CollisionRadius = 50.f;
-	float Mass = 1.f;
 	bool bIsSimulating;
 };
