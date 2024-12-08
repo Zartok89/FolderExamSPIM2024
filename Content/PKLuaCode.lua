@@ -1,3 +1,9 @@
+function SpawnEntitiesFunction()
+    -- Paramters (InLocationX, InLocationY, InVelocityX, InVelocityY, InAccelerationX, InAccelerationY)
+    SpawnEntity(500, 4000, 0, 20, 20, 50)
+    print("Spawned entity from Lua")
+end
+
 function GetPlayerLocationFunction()
     location = GetPlayerPawnLocation()
     print(location.x, location.y, location.z)

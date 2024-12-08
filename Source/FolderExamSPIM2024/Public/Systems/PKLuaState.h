@@ -21,7 +21,7 @@ public:
 	FLuaValue GetPlayerPawnLocation();
 
 	UFUNCTION()
-	FLuaValue GetSimpleString();
+	FLuaValue SpawnEntity(FLuaValue InLocationX, FLuaValue InLocationY, FLuaValue InVelocityX, FLuaValue InVelocityY, FLuaValue InAccelerationX, FLuaValue InAccelerationY);
 
 	UFUNCTION()
 	FLuaValue SetEntityMaxSpeed(FLuaValue InMaxSpeed);
@@ -29,7 +29,18 @@ public:
 	UFUNCTION()
 	FLuaValue PrintNumber(FLuaValue InNumber);
 
+	UFUNCTION(BlueprintCallable)
+	void StartTimer();
+
+	void StopTimer();
+
+	void SpawnTimer();
+
 	/*
 	 * Variables
 	 */
+	float SpawnTimeDelay = 2.f;
+	FTimerHandle LuaTimerHandle;
+	bool bCanSpawn = false;
+
 };
