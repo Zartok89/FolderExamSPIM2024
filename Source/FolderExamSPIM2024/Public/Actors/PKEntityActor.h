@@ -36,8 +36,6 @@ public:
 	int32 PhysicsIndex;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Entity")
 	UStaticMeshComponent* EntityMesh;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
-	UBoxComponent* BoxCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
 	FVector CollisionSize;
 };
