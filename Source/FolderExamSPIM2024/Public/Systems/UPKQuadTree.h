@@ -44,8 +44,6 @@ class FOLDEREXAMSPIM2024_API UPKQuadTree : public UObject
 public:
 	UPKQuadTree();
 
-	//UPKQuadTree(const FObjectInitializer& ObjectInitializer);
-
 	void Initialize(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax, int& InMaxEntitiesPerNode, int& InMaxDepth);
 	void Update(const FVector2D& InBoundsMin, const FVector2D& InBoundsMax, int& InMaxEntitiesPerNode, int& InMaxDepth);
 

@@ -18,8 +18,8 @@ public:
 	 */
 	int32 EntityID;
 	float Mass = 1.f;
-	FVector Velocity;
-	FVector Acceleration;
+	FVector Velocity = { 0.f, 10.f, 0.f };
+	FVector Acceleration = { 0.f, 10.f, 0.f };;
 	float CollisionRadius = 50.f;
-	bool bIsSimulating;
+	bool bIsSimulating = true;
 };

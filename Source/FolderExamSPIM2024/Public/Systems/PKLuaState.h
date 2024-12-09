@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -7,7 +5,7 @@
 #include "PKLuaState.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS(BlueprintType)
 class FOLDEREXAMSPIM2024_API UPKLuaState : public ULuaState
@@ -42,5 +40,4 @@ public:
 	float SpawnTimeDelay = 2.f;
 	FTimerHandle LuaTimerHandle;
 	bool bCanSpawn = false;
-
 };
